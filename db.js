@@ -9,6 +9,39 @@ const db = new sqlite3.Database(dbPath, (err) => {
     return;
   }
   console.log('Connected to SQLite database.');
+
+  // Create users table
+  db.run(`
+    CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      username TEXT NOT NULL,
+      email TEXT NOT NULL UNIQUE,
+      password TEXT NOT NULL
+    )
+  `, (err) => {
+    if (err) {
+      console.error('Failed to create users table:', err.message);
+    } else {
+      console.log('Users table ensured.');
+    }
+  });
+
+  // Create products table
+  db.run(`
+    CREATE TABLE IF NOT EXISTS products (
+      product_Id INTEGER PRIMARY KEY AUTOINCREMENT,
+      productName TEXT NOT NULL,
+      description TEXT,
+      quantity INTEGER,
+      price REAL
+    )
+  `, (err) => {
+    if (err) {
+      console.error('Failed to create products table:', err.message);
+    } else {
+      console.log('Products table ensured.');
+    }
+  });
 });
 
 module.exports = db;
