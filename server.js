@@ -12,7 +12,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 
-// 404 handler
+// 404 handler 
 app.use((req, res) => {
   res.status(404).json({ message: "Requested resource could not be found. 😐" });
 });
