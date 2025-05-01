@@ -8,7 +8,15 @@ const app = express();
 
 app.use(express.json());
 
-// Routes
+// 👇 Landing Page
+app.get('/', (req, res) => {
+  res.send(`
+    <h1>Welcome to My API 🎉</h1>
+    <p>Use <code>/api/auth</code> for authentication routes and <code>/api/products</code> for products.</p>
+  `);
+});
+
+// API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 
@@ -21,4 +29,3 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
-
