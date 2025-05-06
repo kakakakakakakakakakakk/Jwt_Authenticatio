@@ -100,7 +100,7 @@
       const email = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value.trim();
 
-      const baseURL = 'https://adolphe-jwt.onrender.com/api/auth'; // Backend URL
+      const baseURL = 'https://adolphe-jwt.onrender.com/api/auth/register'; // Backend URL
       const url = isLogin ? `${baseURL}/login` : `${baseURL}/register`;
 
       const payload = isLogin ? { email, password } : { username, email, password };

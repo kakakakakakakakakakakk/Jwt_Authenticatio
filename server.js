@@ -10,7 +10,7 @@ const app = express();
 // Enable CORS for all origins (for development)
 // Alternatively, you can specify allowed origins as shown in the example below.
 app.use(cors({
-  origin: 'https://adolphe-jwt.onrender.com/auth/register', // Allows all domains, or specify a domain like 'https://adolphe-jwt.onrender.com/auth/register'
+  origin: 'https://adolphe-jwt.onrender.com', // Allows all domains, or specify a domain like 'http://yourfrontend.com/'
 }));
 
 // Parse JSON bodies
