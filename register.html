@@ -1,138 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Register & Login</title>
+  <meta charset="UTF-8">
+  <title>Register</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #f7f9fc;
+      background: #f2f2f2;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      margin: 0;
     }
-
-    .container {
-      width: 350px;
-      padding: 20px;
-      background-color: #fff;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    .register-form {
+      background: #fff;
+      padding: 25px 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      width: 300px;
     }
-
-    h2 {
+    .register-form h2 {
       text-align: center;
-      margin-bottom: 15px;
+      margin-bottom: 20px;
+      color: #333;
     }
-
-    input[type="text"],
-    input[type="email"],
-    input[type="password"] {
+    .register-form input[type="text"],
+    .register-form input[type="email"],
+    .register-form input[type="password"] {
       width: 100%;
       padding: 10px;
-      margin: 8px 0;
+      margin: 8px 0 16px;
       border: 1px solid #ccc;
-      border-radius: 5px;
-      font-size: 14px;
+      border-radius: 4px;
     }
-
-    button {
+    .register-form button {
       width: 100%;
       padding: 10px;
-      background-color: #4CAF50;
-      color: white;
+      background: #28a745;
       border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 16px;
-    }
-
-    button:hover {
-      background-color: #45a049;
-    }
-
-    .message {
-      margin-top: 10px;
-      text-align: center;
-      color: #e74c3c;
+      color: white;
       font-weight: bold;
-    }
-
-    .form-switch {
-      margin-top: 10px;
-      text-align: center;
+      border-radius: 4px;
       cursor: pointer;
-      color: #007bff;
-      text-decoration: underline;
+    }
+    .register-form button:hover {
+      background: #218838;
+    }
+    .message {
+      margin-top: 15px;
+      text-align: center;
+      font-size: 14px;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2 id="form-title">Register</h2>
-    <form id="userForm">
-      <input type="text" id="username" name="username" placeholder="Username" required />
-      <input type="email" id="email" name="email" placeholder="Email" required />
-      <input type="password" id="password" name="password" placeholder="Password" required />
-      <button type="submit">Submit</button>
-    </form>
-    <div class="message" id="responseMessage"></div>
-    <div class="form-switch" onclick="toggleForm()">Switch to Login</div>
-  </div>
+
+  <form class="register-form" id="registerForm">
+    <h2>Register</h2>
+    <input type="text" id="username" name="username" placeholder="Username" required>
+    <input type="email" id="email" name="email" placeholder="Email" required>
+    <input type="password" id="password" name="password" placeholder="Password" required>
+    <button type="submit">Register</button>
+    <div class="message" id="message"></div>
+  </form>
 
   <script>
-    let isLogin = false;
+    const form = document.getElementById('registerForm');
+    const messageDiv = document.getElementById('message');
 
-    function toggleForm() {
-      isLogin = !isLogin;
-      document.getElementById('form-title').innerText = isLogin ? 'Login' : 'Register';
-      document.getElementById('username').style.display = isLogin ? 'none' : 'block';
-      document.querySelector('.form-switch').innerText = isLogin ? 'Switch to Register' : 'Switch to Login';
-      document.getElementById('responseMessage').innerText = ''; // Clear any message on switch
-    }
-
-    document.getElementById('userForm').addEventListener('submit', async function (e) {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      const username = document.getElementById('username').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value.trim();
-
-      const baseURL = 'https://adolphe-jwt.onrender.com/api/auth/register'; // Backend URL
-      const url = isLogin ? `${baseURL}/login` : `${baseURL}/register`;
-
-      const payload = isLogin ? { email, password } : { username, email, password };
+      const username = document.getElementById('username').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
 
       try {
-        const res = await fetch(url, {
+        const response = await fetch('https://adolphe-jwt.onrender.com/auth/register', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ username, email, password }),
         });
 
-        const text = await res.text();
-        let data;
+        const data = await response.json();
 
-        try {
-          data = JSON.parse(text);
-        } catch {
-          throw new Error('Invalid JSON response from server: ' + text);
+        if (response.ok) {
+          messageDiv.style.color = 'green';
+          messageDiv.textContent = data.message + ' (UserID: ' + data.userId + ')';
+          form.reset();
+        } else {
+          messageDiv.style.color = 'red';
+          messageDiv.textContent = data.err || data.message;
         }
-
-        document.getElementById('responseMessage').style.color = res.ok ? 'green' : 'red';
-        document.getElementById('responseMessage').innerText = data.message || 'Success!';
-
-        if (res.ok && data.token) {
-          localStorage.setItem('token', data.token);
-        }
-      } catch (err) {
-        document.getElementById('responseMessage').style.color = 'red';
-        document.getElementById('responseMessage').innerText = 'Error: ' + err.message;
-        console.error(err);
+      } catch (error) {
+        messageDiv.style.color = 'red';
+        messageDiv.textContent = 'Something went wrong!';
+        console.error(error);
       }
     });
   </script>
+
 </body>
 </html>
